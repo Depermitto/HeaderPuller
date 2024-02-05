@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	app := cli.App{Name: "HeaderPuller", Commands: []*cli.Command{echoCmd, hp.PullCmd}}
+	app := cli.App{Name: "HeaderPuller", Commands: []*cli.Command{echoCmd, hp.PullCmd, hp.UninstallCmd}}
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
