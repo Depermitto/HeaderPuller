@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const includeDir = "./include/"
+const includeDir = "./include"
 
 var (
 	ErrRequiresArg = errors.New("requires one argument")
@@ -20,7 +20,7 @@ var (
 	}
 )
 
-// Valid checks if filename ends with one of ValidExtensions
+// Valid checks if fileFmt ends with one of ValidExtensions
 func Valid(filename string) bool {
 	for _, ext := range ValidExtensions {
 		if strings.HasSuffix(filename, ext) {
@@ -32,20 +32,29 @@ func Valid(filename string) bool {
 
 // PullLinks fetches repoLink, fromDir and intoDir based on Args() from *cli.Context. One
 // arg is required - for the repo. fromDir and intoDir default to ./include/.
-func PullLinks(cCtx *cli.Context) (repoLink string, fromDir string, intoDir string, err error) {
+func PullLinks(cCtx *cli.Context) (repoLink string, fromDir string, err error) {
 	if !cCtx.Args().Present() {
-		return "", "", "", ErrRequiresArg
+		return "", "", ErrRequiresArg
 	}
 
 	repoLink = cCtx.Args().Get(0)
-	fromDir = defaultIfEmpty(cCtx.Args().Get(1))
-	intoDir = defaultIfEmpty(cCtx.Args().Get(2))
-	return repoLink, fromDir, intoDir, nil
+	fromDir = ifEmpty(cCtx.Args().Get(1), includeDir)
+	return repoLink, fromDir, nil
 }
 
-func defaultIfEmpty(filename string) string {
+func ifEmpty(filename string, other string) string {
 	if len(filename) == 0 {
-		return includeDir
+		return other
+	}
+	return filename
+}
+
+func fileFmt(pathParts ...string) (filename string) {
+	for i, s := range pathParts {
+		filename += s
+		if i < len(pathParts)-1 {
+			filename += "/"
+		}
 	}
 	return filename
 }
