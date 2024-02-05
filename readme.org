@@ -1,0 +1,20 @@
+#+title: Cross-platform header-only package manager for C/C++
+
+* Install
+Provided you have *go* installed, use this oneliner in commandline:
+#+begin_src bash
+git clone https://github.com/Depermitto/HeaderPuller && cd ./HeaderPuller && go build -o $GOPATH/bin/hp
+#+end_src
+
+* Capabilites
+- pull, p       pull headers in specified folder
+- uninstall, u  Removes the hp tool
+
+** Pull
+There are 3 variations of this command:
+1. pull *repo-link* - providing the repo link will copy every valid fileFmt from *repo-link*/include/ to ./include/
+2. pull *repo-link* *fileFmt* - will copy that exact fileFmt if valid from *repo-link*/*fileFmt* to ./include/
+3. pull *repo-link* *from* - will copy every valid fileFmt from *repo-link/*from*/ to ./*from*, which is by default ./include/
+
+** Unintall
+Upon confirmation, wipes *hp* from the computer entirely
