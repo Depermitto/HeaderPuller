@@ -12,7 +12,12 @@ var (
 	ErrRequiresArg = errors.New("requires one argument")
 	ErrArgAmount   = errors.New("incorrect argument amount")
 
-	ValidExtensions = []string{".h", ".hpp", ".cpp", ".c", ".cxx", ".iml", ".ii", ".cc", ".c++"}
+	ValidExtensions = []string{
+		".c", ".h",
+		".cpp", ".c++", ".cxx", ".cc",
+		".hpp", ".h++", ".hxx",
+		".ii", ".iml",
+	}
 )
 
 // Valid checks if filename ends with one of ValidExtensions
@@ -33,7 +38,7 @@ func PullLinks(cCtx *cli.Context) (repoLink string, fromDir string, intoDir stri
 	}
 
 	repoLink = cCtx.Args().Get(0)
-	fromDir = cCtx.Args().Get(1)
+	fromDir = defaultIfEmpty(cCtx.Args().Get(1))
 	intoDir = defaultIfEmpty(cCtx.Args().Get(2))
 	return repoLink, fromDir, intoDir, nil
 }

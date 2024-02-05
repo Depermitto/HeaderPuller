@@ -41,7 +41,13 @@ func getFiles(fs billy.Filesystem, dirname string) (files []File) {
 var PullCmd = &cli.Command{
 	Name:    "pull",
 	Aliases: []string{"p"},
-	Usage:   "pull headers in <repo-link>/include folder",
+	Usage:   "pull headers in specified folder",
+	Description: `Usage: pull <repo-link> [optional arguments...]
+There are 3 variations of this command:
+	- pull <repo-link> - providing the repo link will copy every valid file from <repo-link>/include/ to ./include/
+	- pull <repo-link> <filename> [into] - will copy that exact file if valid from <repo-link>/<filename> to ./[into], which is by deafult ./include/
+	- pull <repo-link> <from> [into] - will copy every valid file from <repo-link/<from>/ to ./[into], which is by default ./include/
+`,
 	Action: func(cCtx *cli.Context) error {
 		repoLink, headerDir, intoDir, err := PullLinks(cCtx)
 		if err != nil {
@@ -60,6 +66,16 @@ var PullCmd = &cli.Command{
 
 		// If intoDir doesn't exist, create one
 		_ = os.Mkdir(intoDir, 0755)
+
+		if Valid(headerDir) {
+			header, err := fs.Open(headerDir)
+			if err != nil {
+				return err
+			}
+
+			defer header.Close()
+			return createWithContent(header, intoDir+header.Name())
+		}
 
 		// Check if repo has a valid headers directory
 		for _, file := range getFiles(fs, headerDir) {
