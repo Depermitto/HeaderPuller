@@ -3,6 +3,7 @@ package hp
 import (
 	"errors"
 	"github.com/urfave/cli/v2"
+	"runtime"
 	"strings"
 )
 
@@ -50,10 +51,14 @@ func ifEmpty(filename string, other string) string {
 }
 
 func fileFmt(pathParts ...string) (filename string) {
+	sep := "/"
+	if runtime.GOOS == "windows" {
+		sep = "\\"
+	}
 	for i, s := range pathParts {
 		filename += s
 		if i < len(pathParts)-1 {
-			filename += "/"
+			filename += sep
 		}
 	}
 	return filename
