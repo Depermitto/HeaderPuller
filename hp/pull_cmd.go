@@ -13,7 +13,7 @@ import (
 )
 
 func fileFromReader(dst io.Reader, filepath string) error {
-	i := strings.LastIndex(filepath, "/")
+	i := strings.LastIndex(filepath, string(os.PathSeparator))
 	var dirname, filename string
 	if i == -1 {
 		dirname, filename = includeDir, filepath
