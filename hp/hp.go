@@ -3,11 +3,11 @@ package hp
 import (
 	"errors"
 	"github.com/urfave/cli/v2"
-	"runtime"
+	"os"
 	"strings"
 )
 
-const includeDir = "./include"
+const includeDir = "include"
 
 var (
 	ErrRequiresArg = errors.New("requires one argument")
@@ -51,14 +51,10 @@ func ifEmpty(filename string, other string) string {
 }
 
 func fileFmt(pathParts ...string) (filename string) {
-	sep := "/"
-	if runtime.GOOS == "windows" {
-		sep = "\\"
-	}
 	for i, s := range pathParts {
 		filename += s
 		if i < len(pathParts)-1 {
-			filename += sep
+			filename += string(os.PathSeparator)
 		}
 	}
 	return filename
