@@ -47,7 +47,7 @@ Removes files and folders of all header files encompassing a package. There are 
 - remove ~name~ - remove by package name
 - remove ~repo-link~ - remove by repository link
 
-The ids and packages names are provided by the [[Listing pulled packages][list]] command.
+The ids and packages names are provided by the [[listing-pulled-packages][list]] command.
 
 *** Example
 #+begin_src bash
