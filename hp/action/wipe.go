@@ -9,7 +9,7 @@ import (
 )
 
 var Wipe cli.ActionFunc = func(cCtx *cli.Context) error {
-	if cCtx.Args().Present() {
+	if cCtx != nil && cCtx.Args().Present() {
 		return hp.ErrArg
 	}
 
@@ -32,5 +32,5 @@ var Wipe cli.ActionFunc = func(cCtx *cli.Context) error {
 		}
 	}
 	removeEmptyDirs("include")
-	return os.Remove("hp.yaml")
+	return nil
 }

@@ -36,6 +36,9 @@ func Remove(arg string, mode rmMode) error {
 		}
 	}
 
+	if len(filtered.Packages) == 0 {
+		return os.Remove("hp.yaml")
+	}
 	return pkg.Marshall(filtered)
 }
 
