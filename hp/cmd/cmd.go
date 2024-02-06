@@ -3,6 +3,8 @@ package cmd
 import (
 	"HeaderPuller/hp"
 	"HeaderPuller/hp/action"
+	"HeaderPuller/hp/pkg"
+	"fmt"
 	"github.com/urfave/cli/v2"
 	"strconv"
 )
@@ -10,7 +12,7 @@ import (
 var PullCmd = &cli.Command{
 	Name:    "pull",
 	Aliases: []string{"p"},
-	Usage:   "pull headers in specified folder",
+	Usage:   "pull headers in specified folder and update/create the config file",
 	Description: `Usage: pull <repo-link> [optional arguments...]
 There are 3 variations of this command:
 	- pull <repo-link> - providing the repo link will copy every valid file from <repo-link>/include/ to ./include/
@@ -39,13 +41,13 @@ var UninstallCmd = &cli.Command{
 var SyncCmd = &cli.Command{
 	Name:    "sync",
 	Aliases: []string{"s"},
-	Usage:   "Syncs local files to the latest remote version",
+	Usage:   "Syncs local files to the latest remote version based on config file",
 	Action:  action.Sync,
 }
 
 var RemoveCmd = &cli.Command{
 	Name:    "remove",
-	Aliases: []string{"r", "rm"},
+	Aliases: []string{"rm", "r"},
 	Usage:   "Removes a package and updates the config file",
 	Action: func(cCtx *cli.Context) error {
 		if !cCtx.Args().Present() {
@@ -68,6 +70,33 @@ var RemoveCmd = &cli.Command{
 
 var WipeCmd = &cli.Command{
 	Name:   "wipe",
-	Usage:  "Removes all packages and then HeaderPuller itself",
+	Usage:  "Removes all packages and then HeaderPuller itself from workspace",
 	Action: action.Wipe,
+}
+
+var ListCmd = &cli.Command{
+	Name:    "list",
+	Aliases: []string{"l"},
+	Usage:   "Lists currently pulled packages in workspace",
+	Action: func(cCtx *cli.Context) error {
+		localPkgs, err := pkg.Unmarshalled()
+		if err != nil {
+			return err
+		}
+
+		for i, p := range localPkgs.Packages {
+			fmt.Printf("%v: %v\n", i, p.Name)
+		}
+		return nil
+	},
+}
+
+var VersionCmd = &cli.Command{
+	Name:    "version",
+	Aliases: []string{"v"},
+	Usage:   "Get program version",
+	Action: func(cCtx *cli.Context) error {
+		fmt.Printf("hp version %v\n", cCtx.App.Version)
+		return nil
+	},
 }

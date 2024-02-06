@@ -8,13 +8,21 @@ import (
 )
 
 func main() {
-	app := cli.App{Name: "HeaderPuller", Commands: []*cli.Command{
-		cmd.PullCmd,
-		cmd.SyncCmd,
-		cmd.RemoveCmd,
-		cmd.UninstallCmd,
-		cmd.WipeCmd,
-	}}
+	app := cli.App{
+		Name:        "hp",
+		Usage:       "Pull header files from git repositories to current workspace",
+		UsageText:   "hp command [args...]",
+		Version:     "1.0",
+		HideVersion: true,
+		Commands: []*cli.Command{
+			cmd.PullCmd,
+			cmd.ListCmd,
+			cmd.SyncCmd,
+			cmd.RemoveCmd,
+			cmd.WipeCmd,
+			cmd.VersionCmd,
+			cmd.UninstallCmd,
+		}}
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
