@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	app := cli.App{Name: "HeaderPuller", Commands: []*cli.Command{cmd.PullCmd, cmd.UninstallCmd}}
+	app := cli.App{Name: "HeaderPuller", Commands: []*cli.Command{cmd.PullCmd, cmd.SyncCmd, cmd.RemoveCmd, cmd.UninstallCmd}}
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)

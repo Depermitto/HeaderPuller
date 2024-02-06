@@ -2,47 +2,66 @@ package action
 
 import (
 	"HeaderPuller/hp"
+	"HeaderPuller/hp/pkg"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"github.com/urfave/cli/v2"
+	"slices"
 )
 
-var Pull action = func(cCtx *cli.Context) error {
-	repoLink, headerDir, err := pullLinks(cCtx)
+var Pull = func(repoLink string, headerDir string) error {
+	if !hp.IsRepoLink(repoLink) {
+		repoLink = "https://" + repoLink
+	}
+
+	pkgs, err := pkg.Unmarshalled()
 	if err != nil {
 		return err
+	}
+
+	if slices.ContainsFunc(pkgs.Packages, func(e pkg.ConfigPkg) bool {
+		return e.Link == repoLink
+	}) {
+		return hp.NoErrAlreadyDownloaded
 	}
 
 	fs := memfs.New()
 	storer := memory.NewStorage()
 	_, err = git.Clone(storer, fs, &git.CloneOptions{
-		URL:   "https://" + repoLink,
+		URL:   repoLink,
 		Depth: 1,
 	})
 	if err != nil {
 		return err
 	}
 
+	// Check if repo has a valid headers directory
+	var files []string
 	if hp.Valid(headerDir) {
-		header, err := fs.Open(headerDir)
-		if err != nil {
-			return err
-		}
-		defer header.Close()
-		return createFileFromReader(header, header.Name())
+		files = append(files, hp.FileFmt(hp.IncludeDir, headerDir))
 	}
 
-	// Check if repo has a valid headers directory
-	for _, file := range getFiles(fs, headerDir) {
+	for _, file := range filesFromBilly(fs, headerDir) {
 		if !hp.Valid(file.Name()) {
 			continue
 		}
-		err := createFileFromReader(file, file.Name())
-		if err != nil {
+
+		if err = createFileFromReader(file, file.Name()); err != nil {
 			return err
 		}
 		file.Close()
+		files = append(files, file.Name())
 	}
-	return nil
+
+	_, name := hp.FilepathSplit(repoLink)
+	configPkg := pkg.ConfigPkg{
+		Name:   name,
+		Link:   repoLink,
+		Remote: headerDir,
+		Local:  files,
+	}
+	pkgs.Packages = append(pkgs.Packages, configPkg)
+	pkgs.Update()
+
+	return pkg.Marshall(pkgs)
 }

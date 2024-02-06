@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var Uninstall action = func(cCtx *cli.Context) error {
+var Uninstall cli.ActionFunc = func(cCtx *cli.Context) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Are you sure? [Y/N] ")
 	scanner.Scan()

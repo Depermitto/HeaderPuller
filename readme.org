@@ -18,3 +18,8 @@ There are 3 variations of this command:
 
 ** Uninstall
 Upon confirmation, wipes *hp* from the computer entirely
+
+* TODO
+- [ ] Update README to the newest version of software
+- [ ] Fix <repo-link>/<header> pulling (e.g. [[https://github.com/mackron/miniaudio][miniaudio]])
+- [ ] Implement wiping whole *hp.yaml*

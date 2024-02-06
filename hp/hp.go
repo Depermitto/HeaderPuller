@@ -12,8 +12,8 @@ const (
 )
 
 var (
-	ErrRequiresArg = errors.New("requires one argument")
-	ErrArgAmount   = errors.New("incorrect argument amount")
+	ErrRequiresArg         = errors.New("requires one argument")
+	NoErrAlreadyDownloaded = errors.New("already downloaded this package")
 
 	ValidExtensions = []string{
 		".c", ".h",
