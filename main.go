@@ -12,7 +12,7 @@ func main() {
 		Name:        "hp",
 		Usage:       "pull header files from git repositories to current workspace",
 		UsageText:   "hp command [args...]",
-		Version:     "1.0",
+		Version:     "0.1",
 		HideVersion: true,
 		Commands: []*cli.Command{
 			cmd.PullCmd,
