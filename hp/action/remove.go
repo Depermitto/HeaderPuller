@@ -4,6 +4,7 @@ import (
 	"HeaderPuller/hp"
 	"HeaderPuller/hp/pkg"
 	"os"
+	"strconv"
 )
 
 type rmMode int
@@ -14,17 +15,17 @@ const (
 	LinkMode
 )
 
-func Remove(configPkg pkg.ConfigPkg, mode rmMode) error {
+func Remove(arg string, mode rmMode) error {
 	pkgs, err := pkg.Unmarshalled()
 	if err != nil {
 		return err
 	}
 
 	var filtered pkg.ConfigPkgs
-	for _, p := range pkgs.Packages {
-		if (mode == LinkMode && p.Link == configPkg.Link) ||
-			(mode == IdMode && p.Id == configPkg.Id) ||
-			(mode == NameMode && p.Name == configPkg.Name) {
+	for i, p := range pkgs.Packages {
+		if (mode == LinkMode && p.Link == arg) ||
+			(mode == IdMode && strconv.FormatInt(int64(i), 10) == arg) ||
+			(mode == NameMode && p.Name == arg) {
 
 			for _, filepath := range p.Local {
 				os.Remove(filepath)
@@ -34,7 +35,6 @@ func Remove(configPkg pkg.ConfigPkg, mode rmMode) error {
 			filtered.Packages = append(filtered.Packages, p)
 		}
 	}
-	filtered.Update()
 
 	return pkg.Marshall(filtered)
 }
@@ -48,7 +48,7 @@ func removeEmptyDirs(dirname string) {
 	}
 
 	dirs, _ = os.ReadDir(dirname)
-	if len(dirs) == 0 {
+	if dirs == nil || len(dirs) == 0 {
 		os.RemoveAll(dirname)
 	}
 }

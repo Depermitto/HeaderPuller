@@ -12,7 +12,7 @@ func createFileFromReader(reader io.Reader, filepath string) error {
 	dirname, filename := hp.FilepathSplit(filepath)
 	fmt.Println(hp.FileFmt(dirname, filename))
 
-	os.MkdirAll(dirname, 0755)
+	os.MkdirAll(dirname, hp.Perm)
 	file, err := os.Create(hp.FileFmt(dirname, filename))
 	if err != nil {
 		return err
@@ -24,6 +24,13 @@ func createFileFromReader(reader io.Reader, filepath string) error {
 }
 
 func filesFromBilly(fs billy.Filesystem, dirname string) (files []billy.File) {
+	if hp.Valid(dirname) {
+		path := hp.FileFmt(hp.IncludeDir, dirname)
+		_ = fs.Rename(dirname, path)
+		file, _ := fs.Open(path)
+		return []billy.File{file}
+	}
+
 	infos, err := fs.ReadDir(dirname)
 	if err != nil {
 		return []billy.File{}

@@ -2,6 +2,7 @@ package hp
 
 import (
 	"errors"
+	"github.com/go-git/go-git/v5"
 	"os"
 	"strings"
 )
@@ -9,10 +10,14 @@ import (
 const (
 	IncludeDir = "include"
 	PathSep    = string(os.PathSeparator)
+	Perm       = 0755
 )
 
 var (
-	ErrRequiresArg         = errors.New("requires one argument")
+	ErrNoArg               = errors.New("requires one argument")
+	ErrNoFilesFound        = errors.New("no files found")
+	ErrArg                 = errors.New("this configuration doesn't take any arguments")
+	ErrNotInWorkspace      = errors.New("not in a HeaderPuller workspace")
 	NoErrAlreadyDownloaded = errors.New("already downloaded this package")
 
 	ValidExtensions = []string{
@@ -32,4 +37,11 @@ func Valid(filename string) bool {
 		}
 	}
 	return false
+}
+
+func DefaultOptions(repoLink string) *git.CloneOptions {
+	return &git.CloneOptions{
+		URL:   repoLink,
+		Depth: 1,
+	}
 }

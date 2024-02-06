@@ -3,7 +3,6 @@ package cmd
 import (
 	"HeaderPuller/hp"
 	"HeaderPuller/hp/action"
-	"HeaderPuller/hp/pkg"
 	"github.com/urfave/cli/v2"
 	"strconv"
 )
@@ -20,7 +19,7 @@ There are 3 variations of this command:
 `,
 	Action: func(cCtx *cli.Context) error {
 		if !cCtx.Args().Present() {
-			return hp.ErrRequiresArg
+			return hp.ErrNoArg
 		}
 
 		repoLink, headerDir := cCtx.Args().First(), cCtx.Args().Get(1)
@@ -50,19 +49,25 @@ var RemoveCmd = &cli.Command{
 	Usage:   "Removes a package and updates the config file",
 	Action: func(cCtx *cli.Context) error {
 		if !cCtx.Args().Present() {
-			return hp.ErrRequiresArg
+			return hp.ErrNoArg
 		}
 
 		arg := cCtx.Args().First()
-		if id, err := strconv.ParseInt(arg, 10, 32); err == nil {
-			return action.Remove(pkg.ConfigPkg{Id: int(id)}, action.IdMode)
+		if _, err := strconv.ParseInt(arg, 10, 32); err == nil {
+			return action.Remove(arg, action.IdMode)
 		}
 
 		if hp.IsRepoLink(arg) {
-			return action.Remove(pkg.ConfigPkg{Link: arg}, action.LinkMode)
+			return action.Remove(arg, action.LinkMode)
 		}
 
 		_, arg = hp.FilepathSplit(arg)
-		return action.Remove(pkg.ConfigPkg{Name: arg}, action.NameMode)
+		return action.Remove(arg, action.NameMode)
 	},
+}
+
+var WipeCmd = &cli.Command{
+	Name:   "wipe",
+	Usage:  "Removes all packages and then HeaderPuller itself",
+	Action: action.Wipe,
 }

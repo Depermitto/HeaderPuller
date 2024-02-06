@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"HeaderPuller/hp"
 	"errors"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -13,17 +14,10 @@ type ConfigPkgs struct {
 }
 
 type ConfigPkg struct {
-	Id     int      `yaml:"id"`
 	Name   string   `yaml:"name"`
 	Link   string   `yaml:"link"`
 	Remote string   `yaml:"remote"`
 	Local  []string `yaml:"local"`
-}
-
-func (pkgs ConfigPkgs) Update() {
-	for i := range pkgs.Packages {
-		pkgs.Packages[i].Id = i + 1
-	}
 }
 
 func Unmarshalled() (pkgs ConfigPkgs, err error) {
@@ -39,7 +33,7 @@ func Unmarshalled() (pkgs ConfigPkgs, err error) {
 	if err = yaml.Unmarshal(buffer, &pkgs); err != nil {
 		return ConfigPkgs{}, err
 	}
-	return pkgs, err
+	return pkgs, nil
 }
 
 func Marshall(pkgs ConfigPkgs) error {
@@ -48,6 +42,5 @@ func Marshall(pkgs ConfigPkgs) error {
 		return err
 	}
 
-	err = os.WriteFile(ConfigFilepath, marshal, 0755)
-	return err
+	return os.WriteFile(ConfigFilepath, marshal, hp.Perm)
 }

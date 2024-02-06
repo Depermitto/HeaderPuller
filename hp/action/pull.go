@@ -14,34 +14,30 @@ var Pull = func(repoLink string, headerDir string) error {
 		repoLink = "https://" + repoLink
 	}
 
-	pkgs, err := pkg.Unmarshalled()
+	localPkgs, err := pkg.Unmarshalled()
 	if err != nil {
 		return err
 	}
 
-	if slices.ContainsFunc(pkgs.Packages, func(e pkg.ConfigPkg) bool {
-		return e.Link == repoLink
+	if slices.ContainsFunc(localPkgs.Packages, func(e pkg.ConfigPkg) bool {
+		return e.Link == repoLink && e.Remote == headerDir
 	}) {
 		return hp.NoErrAlreadyDownloaded
 	}
 
 	fs := memfs.New()
 	storer := memory.NewStorage()
-	_, err = git.Clone(storer, fs, &git.CloneOptions{
-		URL:   repoLink,
-		Depth: 1,
-	})
-	if err != nil {
+	if _, err = git.Clone(storer, fs, hp.DefaultOptions(repoLink)); err != nil {
 		return err
 	}
 
-	// Check if repo has a valid headers directory
-	var files []string
-	if hp.Valid(headerDir) {
-		files = append(files, hp.FileFmt(hp.IncludeDir, headerDir))
+	var billyFiles = filesFromBilly(fs, headerDir)
+	if len(billyFiles) == 0 {
+		return hp.ErrNoFilesFound
 	}
 
-	for _, file := range filesFromBilly(fs, headerDir) {
+	var filepaths []string
+	for _, file := range billyFiles {
 		if !hp.Valid(file.Name()) {
 			continue
 		}
@@ -50,7 +46,7 @@ var Pull = func(repoLink string, headerDir string) error {
 			return err
 		}
 		file.Close()
-		files = append(files, file.Name())
+		filepaths = append(filepaths, file.Name())
 	}
 
 	_, name := hp.FilepathSplit(repoLink)
@@ -58,10 +54,9 @@ var Pull = func(repoLink string, headerDir string) error {
 		Name:   name,
 		Link:   repoLink,
 		Remote: headerDir,
-		Local:  files,
+		Local:  filepaths,
 	}
-	pkgs.Packages = append(pkgs.Packages, configPkg)
-	pkgs.Update()
+	localPkgs.Packages = append(localPkgs.Packages, configPkg)
 
-	return pkg.Marshall(pkgs)
+	return pkg.Marshall(localPkgs)
 }
