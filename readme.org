@@ -70,5 +70,5 @@ Upon confirmation, wipes *hp* from the computer entirely
 - [X] Update README to the newest version of software
 - [X] Fix <repo-link>/<header> pulling (e.g. [[https://github.com/mackron/miniaudio][miniaudio]])
 - [X] Implement wiping whole *hp.yaml*
-- [ ] Fix ~sync~ command to ignore already downloaded packages
-- [ ] Make it possible to ~wipe~ an empty /hp.yaml/
+- [X] Fix ~sync~ command to ignore already downloaded packages
+- [X] Make it possible to ~wipe~ an empty /hp.yaml/
