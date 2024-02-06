@@ -20,15 +20,14 @@ Pull single/multi header libraries from git repositories. There are 3 variations
 
 *** Example
 Pull a fantastic random number generating single-header library written in C++ (the _https://_ part may be omitted):
-#+begin_src bash
-hp pull [[https://github.com/Depermitto/randshow]]
+| hp pull [[https://github.com/Depermitto/randshow]] |
 
+#+begin_src bash
 workspace
 +-- include
 |   +-- randshow.hpp
 +-- hp.yaml
 ...
-
 #+end_src
 
 ** Listing pulled packages
