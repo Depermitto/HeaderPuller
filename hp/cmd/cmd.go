@@ -13,7 +13,7 @@ var PullCmd = &cli.Command{
 	Name:    "pull",
 	Aliases: []string{"p"},
 	Usage:   "pull headers in specified folder and update/create the config file",
-	Description: `Usage: pull <repo-link> [optional arguments...]
+	Description: `usage: pull <repo-link> [optional args...]
 There are 3 variations of this command:
 	- pull <repo-link> - providing the repo link will copy every valid file from <repo-link>/include/ to ./include/
 	- pull <repo-link> <file> - will copy that exact file if valid from <repo-link>/ to ./include/
@@ -34,21 +34,28 @@ There are 3 variations of this command:
 
 var UninstallCmd = &cli.Command{
 	Name:   "uninstall",
-	Usage:  "Removes the hp tool",
+	Usage:  "upon confirmation, wipes hp from the computer entirely",
 	Action: action.Uninstall,
 }
 
 var SyncCmd = &cli.Command{
 	Name:    "sync",
 	Aliases: []string{"s"},
-	Usage:   "Syncs local files to the latest remote version based on config file",
+	Usage:   "updates every package to the latest version.",
 	Action:  action.Sync,
 }
 
 var RemoveCmd = &cli.Command{
 	Name:    "remove",
 	Aliases: []string{"rm", "r"},
-	Usage:   "Removes a package and updates the config file",
+	Usage:   "removes a package and updates the config file",
+	Description: `removes files and folders of all header files encompassing a package. There are 3 variations of this command:
+- remove <id> - delete by id
+- remove <name> - remove by package name
+- remove <repo-link> - remove by repository link
+
+The ids and packages names are provided by the list command.
+`,
 	Action: func(cCtx *cli.Context) error {
 		if !cCtx.Args().Present() {
 			return hp.ErrNoArg
@@ -70,14 +77,15 @@ var RemoveCmd = &cli.Command{
 
 var WipeCmd = &cli.Command{
 	Name:   "wipe",
-	Usage:  "Removes all packages and then HeaderPuller itself from workspace",
+	Usage:  "removes all pulled packages and the the *hp.yaml* file itself.",
 	Action: action.Wipe,
 }
 
 var ListCmd = &cli.Command{
-	Name:    "list",
-	Aliases: []string{"l"},
-	Usage:   "Lists currently pulled packages in workspace",
+	Name:        "list",
+	Aliases:     []string{"l"},
+	Usage:       "lists currently pulled packages in workspace",
+	Description: "list all installed packages along with their identifiers. Ids correspond to order the packages have been added by and names are git repository names stripped of the author.",
 	Action: func(cCtx *cli.Context) error {
 		localPkgs, err := pkg.Unmarshalled()
 		if err != nil {
@@ -94,7 +102,7 @@ var ListCmd = &cli.Command{
 var VersionCmd = &cli.Command{
 	Name:    "version",
 	Aliases: []string{"v"},
-	Usage:   "Get program version",
+	Usage:   "get program version",
 	Action: func(cCtx *cli.Context) error {
 		fmt.Printf("hp version %v\n", cCtx.App.Version)
 		return nil

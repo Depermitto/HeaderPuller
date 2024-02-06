@@ -1,25 +1,44 @@
 #+title: Cross-platform header-only package manager for C/C++
+#+Author: Depermitto
 
 * Install
-Provided you have *go* installed, use this oneliner in the command-line:
+Provided you have [[https://go.dev/][go]] installed, use this oneliner in the command-line (should work cross-platform, if not simply clone the repo and run ~go build~):
 #+begin_src bash
 git clone https://github.com/Depermitto/HeaderPuller && cd ./HeaderPuller && go build -o $GOPATH/bin/hp
 #+end_src
 
-* Capabilites
-- pull, p       - pull headers in specified folder
-- uninstall, u  - Removes the hp tool
+* Capabilities
+Upon pulling a file, a *config file* called *hp.yaml* shall be created. This is the core of the package managing functionality. Every *remove* or *pull* operation will modify the content of this file, to keep everything in check. Deleting /include/ folders without using *hp* commands and calling *sync* is _undefined behaviour_.
 
-** Pull
-There are 3 variations of this command:
-1. pull *repo-link* - providing the repo link will copy every valid fileFmt from *repo-link*\/include/ to ./include/
-2. pull *repo-link* *filename* - will copy that exact *filename* if valid from *repo-link* to ./include/
-3. pull *repo-link* *from* - will copy every valid fileFmt from *repo-link/*from*/ to ./*from*, which is by default ./include/
+For any doubts, please refer to the ~help~ command of *hp*.
+
+** Pulling packages
+Pull single/multi header libraries from git repositories. There are 3 variations of this command:
+- pull ~repo-link~ - providing the repo link will copy every valid file from ~repo-link/include~ to ~include~
+- pull ~repo-link~ ~file~ - will copy that exact file if valid from ~repo-link~ to ~include~
+- pull ~repo-link~ ~from~ - will copy every valid file from ~repo-link/from~ to ~from~, which is by default ~include~
+
+** Listing pulled packages
+List all installed packages along with their identifiers in *id*: *package name* format. _Ids_ correspond to order the packages have been added by and _names_ are git repository names stripped of the author.
+
+** Removing packages
+Removes files and folders of all header files encompassing a package. There are 3 variations of this command:
+- remove ~id~ - delete by id
+- remove ~name~ - remove by package name
+- remove ~repo-link~ - remove by repository link
+
+The ids and packages names are provided by the [[Listing pulled packages][list]] command.
+
+** Syncing
+The ~sync~ command simply pulls every package in *hp.yaml* and overwrites overlapping content, effectively updating every package to the latest version.
+
+** Wiping hp from workspace
+The ~wipe~ command removes all pulled packages and the the *hp.yaml* file itself. Does not remove *hp* tool from the computer. For that functionality refer to [[Uninstall]].
 
 ** Uninstall
 Upon confirmation, wipes *hp* from the computer entirely
 
 * TODO
-- [ ] Update README to the newest version of software
+- [X] Update README to the newest version of software
 - [X] Fix <repo-link>/<header> pulling (e.g. [[https://github.com/mackron/miniaudio][miniaudio]])
 - [X] Implement wiping whole *hp.yaml*
