@@ -13,7 +13,7 @@ var Sync cli.ActionFunc = func(cCtx *cli.Context) error {
 	}
 
 	for _, p := range pkgs.Packages {
-		if err := Pull(p.Link, p.Remote); err != nil {
+		if err := Pull(p.Link, p.Remote, cCtx); err != nil {
 			return err
 		}
 	}

@@ -13,11 +13,24 @@ type ConfigPkgs struct {
 	Packages []ConfigPkg `yaml:"packages"`
 }
 
+func (pkgs ConfigPkgs) Append(pkg ConfigPkg) {
+	for _, p := range pkgs.Packages {
+		if p.Eq(pkg) {
+			return
+		}
+	}
+	pkgs.Packages = append(pkgs.Packages, pkg)
+}
+
 type ConfigPkg struct {
 	Name   string   `yaml:"name"`
 	Link   string   `yaml:"link"`
 	Remote string   `yaml:"remote"`
 	Local  []string `yaml:"local"`
+}
+
+func (c ConfigPkg) Eq(other ConfigPkg) bool {
+	return c.Remote == other.Remote && c.Link == other.Link && c.Name == other.Name
 }
 
 func Unmarshalled() (pkgs ConfigPkgs, err error) {

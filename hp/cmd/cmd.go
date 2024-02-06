@@ -12,9 +12,19 @@ import (
 var PullCmd = &cli.Command{
 	Name:    "pull",
 	Aliases: []string{"p"},
-	Usage:   "pull headers in specified folder and update/create the config file",
-	Description: `usage: pull <repo-link> [optional args...]
-There are 3 variations of this command:
+	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:    "ignore-extensions",
+			Aliases: []string{"i"},
+			Usage:   "ignore file extensions, allows pulling any type of file.",
+		},
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "force pull.",
+		}},
+	Usage: "pull headers in specified folder and update/create the config file",
+	Description: `There are 3 variations of this command:
 	- pull <repo-link> - providing the repo link will copy every valid file from <repo-link>/include/ to ./include/
 	- pull <repo-link> <file> - will copy that exact file if valid from <repo-link>/ to ./include/
 	- pull <repo-link> <from> - will copy every valid file from <repo-link/<from>/ to ./<from>, which is by default ./include/
@@ -28,7 +38,7 @@ There are 3 variations of this command:
 		if len(cCtx.Args().Get(1)) == 0 {
 			headerDir = hp.IncludeDir
 		}
-		return action.Pull(repoLink, headerDir)
+		return action.Pull(repoLink, headerDir, cCtx)
 	},
 }
 
@@ -41,8 +51,15 @@ var UninstallCmd = &cli.Command{
 var SyncCmd = &cli.Command{
 	Name:    "sync",
 	Aliases: []string{"s"},
-	Usage:   "updates every package to the latest version.",
-	Action:  action.Sync,
+	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:   "force",
+			Hidden: true,
+			Value:  true,
+		},
+	},
+	Usage:  "updates every package to the latest version.",
+	Action: action.Sync,
 }
 
 var RemoveCmd = &cli.Command{
@@ -54,7 +71,7 @@ var RemoveCmd = &cli.Command{
 - remove <name> - remove by package name
 - remove <repo-link> - remove by repository link
 
-The ids and packages names are provided by the list command.
+the ids and packages names are provided by the list command.
 `,
 	Action: func(cCtx *cli.Context) error {
 		if !cCtx.Args().Present() {

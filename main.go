@@ -2,8 +2,8 @@ package main
 
 import (
 	"HeaderPuller/hp/cmd"
+	"fmt"
 	"github.com/urfave/cli/v2"
-	"log"
 	"os"
 )
 
@@ -25,6 +25,6 @@ func main() {
 		}}
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }

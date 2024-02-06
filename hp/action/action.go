@@ -4,11 +4,12 @@ import (
 	"HeaderPuller/hp"
 	"fmt"
 	"github.com/go-git/go-billy/v5"
+	"github.com/urfave/cli/v2"
 	"io"
 	"os"
 )
 
-func createFileFromReader(reader io.Reader, filepath string) error {
+func createFrom(reader io.Reader, filepath string) error {
 	dirname, filename := hp.FilepathSplit(filepath)
 	fmt.Println(hp.FileFmt(dirname, filename))
 
@@ -23,8 +24,8 @@ func createFileFromReader(reader io.Reader, filepath string) error {
 	return err
 }
 
-func filesFromBilly(fs billy.Filesystem, dirname string) (files []billy.File) {
-	if hp.Valid(dirname) {
+func filesFromBilly(fs billy.Filesystem, dirname string, cCtx *cli.Context) (files []billy.File) {
+	if hp.ValidFile(fs, dirname, cCtx) {
 		path := hp.FileFmt(hp.IncludeDir, dirname)
 		_ = fs.Rename(dirname, path)
 		file, _ := fs.Open(path)
@@ -38,7 +39,7 @@ func filesFromBilly(fs billy.Filesystem, dirname string) (files []billy.File) {
 
 	for _, info := range infos {
 		if info.IsDir() {
-			f := filesFromBilly(fs, hp.FileFmt(dirname, info.Name()))
+			f := filesFromBilly(fs, hp.FileFmt(dirname, info.Name()), cCtx)
 			files = append(files, f...)
 		} else {
 			file, _ := fs.Open(hp.FileFmt(dirname, info.Name()))

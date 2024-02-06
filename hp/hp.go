@@ -2,7 +2,9 @@ package hp
 
 import (
 	"errors"
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
+	"github.com/urfave/cli/v2"
 	"os"
 	"strings"
 )
@@ -29,14 +31,18 @@ var (
 	}
 )
 
-// Valid checks if fileFmt ends with one of ValidExtensions
-func Valid(filename string) bool {
+// ValidFile checks if fileFmt ends with one of ValidExtensions
+func ValidFile(fs billy.Filesystem, filename string, cCtx *cli.Context) bool {
+	if _, err := fs.Open(filename); err != nil {
+		return false
+	}
+
 	for _, ext := range ValidExtensions {
 		if strings.HasSuffix(filename, ext) {
 			return true
 		}
 	}
-	return false
+	return cCtx.Bool("ignore-extensions")
 }
 
 func DefaultOptions(repoLink string) *git.CloneOptions {
