@@ -13,7 +13,7 @@ type ConfigPkgs struct {
 	Packages []ConfigPkg `yaml:"packages"`
 }
 
-func (pkgs ConfigPkgs) Append(pkg ConfigPkg) {
+func (pkgs *ConfigPkgs) Append(pkg ConfigPkg) {
 	for _, p := range pkgs.Packages {
 		if p.Eq(pkg) {
 			return

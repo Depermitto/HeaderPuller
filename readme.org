@@ -72,3 +72,6 @@ Upon confirmation, wipes *hp* from the computer entirely
 - [X] Implement wiping whole *hp.yaml*
 - [X] Fix ~sync~ command to ignore already downloaded packages
 - [X] Make it possible to ~wipe~ an empty /hp.yaml/
+- [ ] Upgrade itself
+- [ ] Clean up codebase
+- [ ] Add comments

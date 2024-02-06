@@ -10,9 +10,9 @@ import (
 func main() {
 	app := cli.App{
 		Name:        "hp",
-		Usage:       "pull header files from git repositories to current workspace",
+		Usage:       "Pull header files from git repositories to current workspace",
 		UsageText:   "hp command [args...]",
-		Version:     "0.2",
+		Version:     "0.2.1",
 		HideVersion: true,
 		Commands: []*cli.Command{
 			cmd.PullCmd,
