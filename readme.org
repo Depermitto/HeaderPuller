@@ -34,9 +34,9 @@ workspace
 List all installed packages along with their identifiers in *id*: *package name* format. _Ids_ correspond to order the packages have been added by and _names_ are git repository names stripped of the author.
 
 *** Example
-#+begin_src bash
-hp list
+| hp list | 
 
+#+begin_src bash
 0: randshow
 #+end_src
 
@@ -49,9 +49,9 @@ Removes files and folders of all header files encompassing a package. There are 
 The ids and packages names are provided by the ~list~ command.
 
 *** Example
-#+begin_src bash
-hp rm 0
+| hp rm 0 |
 
+#+begin_src bash
 workspace
 +-- hp.yaml
 ...
