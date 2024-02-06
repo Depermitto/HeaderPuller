@@ -18,8 +18,28 @@ Pull single/multi header libraries from git repositories. There are 3 variations
 - pull ~repo-link~ ~file~ - will copy that exact file if valid from ~repo-link~ to ~include~
 - pull ~repo-link~ ~from~ - will copy every valid file from ~repo-link/from~ to ~from~, which is by default ~include~
 
+*** Example
+Pull a fantastic random number generating single-header library written in C++ (the /https\:\/\// part may be omitted):
+#+begin_src bash
+hp pull github.com/Depermitto/randshow
+
+workspace
++-- include
+|   +-- randshow.hpp
++-- hp.yaml
+...
+
+#+end_src
+
 ** Listing pulled packages
 List all installed packages along with their identifiers in *id*: *package name* format. _Ids_ correspond to order the packages have been added by and _names_ are git repository names stripped of the author.
+
+*** Example
+#+begin_src bash
+hp list
+
+0: randshow
+#+end_src
 
 ** Removing packages
 Removes files and folders of all header files encompassing a package. There are 3 variations of this command:
@@ -28,6 +48,15 @@ Removes files and folders of all header files encompassing a package. There are 
 - remove ~repo-link~ - remove by repository link
 
 The ids and packages names are provided by the [[Listing pulled packages][list]] command.
+
+*** Example
+#+begin_src bash
+hp rm 0
+
+workspace
++-- hp.yaml
+...
+#+end_src
 
 ** Syncing
 The ~sync~ command simply pulls every package in *hp.yaml* and overwrites overlapping content, effectively updating every package to the latest version.
@@ -38,7 +67,9 @@ The ~wipe~ command removes all pulled packages and the the *hp.yaml* file itself
 ** Uninstall
 Upon confirmation, wipes *hp* from the computer entirely
 
-* TODO
+* TODO Knows bugs
 - [X] Update README to the newest version of software
 - [X] Fix <repo-link>/<header> pulling (e.g. [[https://github.com/mackron/miniaudio][miniaudio]])
 - [X] Implement wiping whole *hp.yaml*
+- [ ] Fix ~sync~ command to ignore already downloaded packages
+- [ ] Make it possible to ~wipe~ an empty /hp.yaml/
