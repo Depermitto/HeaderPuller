@@ -19,9 +19,9 @@ Pull single/multi header libraries from git repositories. There are 3 variations
 - pull ~repo-link~ ~from~ - will copy every valid file from ~repo-link/from~ to ~from~, which is by default ~include~
 
 *** Example
-Pull a fantastic random number generating single-header library written in C++ (the /https\:\/\// part may be omitted):
+Pull a fantastic random number generating single-header library written in C++ (the _https://_ part may be omitted):
 #+begin_src bash
-hp pull github.com/Depermitto/randshow
+hp pull [[https://github.com/Depermitto/randshow]]
 
 workspace
 +-- include
@@ -47,7 +47,7 @@ Removes files and folders of all header files encompassing a package. There are 
 - remove ~name~ - remove by package name
 - remove ~repo-link~ - remove by repository link
 
-The ids and packages names are provided by the [[Listing pulled packages][list]] command.
+The ids and packages names are provided by the ~list~ command.
 
 *** Example
 #+begin_src bash
@@ -62,7 +62,7 @@ workspace
 The ~sync~ command simply pulls every package in *hp.yaml* and overwrites overlapping content, effectively updating every package to the latest version.
 
 ** Wiping hp from workspace
-The ~wipe~ command removes all pulled packages and the the *hp.yaml* file itself. Does not remove *hp* tool from the computer. For that functionality refer to [[Uninstall]].
+The ~wipe~ command removes all pulled packages and the the *hp.yaml* file itself. Does not remove *hp* tool from the computer. For that functionality refer to ~uninstall~.
 
 ** Uninstall
 Upon confirmation, wipes *hp* from the computer entirely
