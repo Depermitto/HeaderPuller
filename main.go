@@ -20,6 +20,7 @@ func main() {
 			cmd.SyncCmd,
 			cmd.RemoveCmd,
 			cmd.WipeCmd,
+			cmd.UpdateCmd,
 			cmd.VersionCmd,
 			cmd.UninstallCmd,
 		}}

@@ -9,6 +9,7 @@ const (
 	IncludeDir = "include"
 	PathSep    = string(os.PathSeparator)
 	Perm       = 0755
+	RepoLink   = "https://github.com/Depermitto/HeaderPuller"
 )
 
 var (
@@ -21,4 +22,5 @@ var (
 	NoErrWiped           = errors.New("wipe successful")
 	NoErrRemoved         = errors.New("removal successful")
 	NoErrSynced          = errors.New("sync successful")
+	NoErrUpdated         = errors.New("update successful")
 )
