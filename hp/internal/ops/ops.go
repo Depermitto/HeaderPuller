@@ -1,4 +1,4 @@
-package config
+package ops
 
 type Config struct {
 	force     bool

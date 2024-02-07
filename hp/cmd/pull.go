@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"HeaderPuller/hp"
-	"HeaderPuller/hp/internal/config"
 	"HeaderPuller/hp/internal/files"
+	"HeaderPuller/hp/internal/ops"
 	"HeaderPuller/hp/internal/pkg"
 	"HeaderPuller/hp/internal/repo"
 	"github.com/go-git/go-billy/v5/memfs"
@@ -26,7 +26,7 @@ var PullCmd = &cli.Command{
 			Aliases: []string{"f"},
 			Usage:   "force pull.",
 		}},
-	Usage: "Pull headers in specified folder and update/create the config file",
+	Usage: "Pull headers in specified folder and update/create the ops file",
 	Description: `There are 3 variations of this command:
 	- pull <repo-link> - providing the repo link will copy every valid file from <repo-link>/include/ to ./include/
 	- pull <repo-link> <file> - will copy that exact file if valid from <repo-link>/ to ./include/
@@ -42,7 +42,7 @@ var PullCmd = &cli.Command{
 			headerDir = hp.IncludeDir
 		}
 
-		conf := config.New()
+		conf := ops.New()
 		conf.SetForce(cCtx.Bool("force"))
 		conf.SetIgnoreExt(cCtx.Bool("ignore-extensions"))
 
@@ -50,36 +50,32 @@ var PullCmd = &cli.Command{
 	},
 }
 
-func Pull(repoLink string, headerDir string, c *config.Config) error {
+func Pull(repoLink string, headerDir string, c *ops.Config) error {
 	if !repo.IsRepoLink(repoLink) {
 		repoLink = "https://" + repoLink
 	}
 
-	localPkgs, err := pkg.Unmarshalled()
-	if err != nil {
-		return err
-	}
-
+	localPkgs := pkg.Unmarshalled()
+	defer pkg.UninitializeIfEmpty()
 	if !c.Force() && localPkgs.Contains(repoLink, headerDir) {
 		return hp.ErrAlreadyDownloaded
 	}
 
 	fs := memfs.New()
 	storer := memory.NewStorage()
-	if _, err = git.Clone(storer, fs, repo.DefaultOptions(repoLink)); err != nil {
+	if _, err := git.Clone(storer, fs, repo.DefaultOptions(repoLink)); err != nil {
 		return err
 	}
 
-	var billyFiles = files.ReadDirRecur(fs, headerDir)
-	if len(billyFiles) == 0 {
-		_ = Wipe() // This is to remove empty config file
+	var foundFiles = files.ReadDirRecur(fs, headerDir)
+	if len(foundFiles) == 0 {
 		return hp.ErrNoFilesFound
 	}
 
 	var filepaths []string
-	for _, file := range billyFiles {
+	for _, file := range foundFiles {
 		if c.IgnoreExt() || files.IsValid(fs, file.Name()) {
-			if err = files.CreateCopy(file, file.Name()); err != nil {
+			if err := files.CreateCopy(file, file.Name()); err != nil {
 				return err
 			}
 			file.Close()
@@ -95,5 +91,7 @@ func Pull(repoLink string, headerDir string, c *config.Config) error {
 		Local:  filepaths,
 	}
 	localPkgs.AppendUnique(configPkg)
-	return pkg.Marshall(localPkgs)
+	pkg.Marshall(localPkgs)
+
+	return hp.NoErrPulled
 }

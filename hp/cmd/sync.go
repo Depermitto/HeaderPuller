@@ -1,8 +1,10 @@
 package cmd
 
 import (
-	"HeaderPuller/hp/internal/config"
+	"HeaderPuller/hp"
+	"HeaderPuller/hp/internal/ops"
 	"HeaderPuller/hp/internal/pkg"
+	"errors"
 	"github.com/urfave/cli/v2"
 )
 
@@ -10,20 +12,23 @@ var SyncCmd = &cli.Command{
 	Name:    "sync",
 	Aliases: []string{"s"},
 	Usage:   "Updates every package to the latest version.",
-	Action:  Sync,
+	Action: func(cCtx *cli.Context) error {
+		if !pkg.Initialized() {
+			return hp.ErrNotInWorkspace
+		}
+
+		return Sync()
+	},
 }
 
 // Sync only checks files in the default folder ./include/!!
-func Sync(*cli.Context) error {
-	pkgs, err := pkg.Unmarshalled()
-	if err != nil {
-		return err
-	}
-
+func Sync() error {
+	pkgs := pkg.Unmarshalled()
 	for _, p := range pkgs.Packages {
-		if err := Pull(p.Link, p.Remote, config.New(config.WithForce)); err != nil {
+		err := Pull(p.Link, p.Remote, ops.New(ops.WithForce))
+		if !errors.Is(err, hp.NoErrPulled) {
 			return err
 		}
 	}
-	return nil
+	return hp.NoErrSynced
 }

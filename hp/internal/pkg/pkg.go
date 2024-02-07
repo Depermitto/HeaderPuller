@@ -33,27 +33,31 @@ type Pkg struct {
 	Local  []string `yaml:"local"`
 }
 
-func Unmarshalled() (pkgs Pkgs, err error) {
-	buffer, err := os.ReadFile(ConfigFilepath)
-	if errors.Is(err, os.ErrNotExist) {
-		os.Create(ConfigFilepath)
-		buffer, err = os.ReadFile(ConfigFilepath)
-	}
-	if err != nil {
-		return Pkgs{}, err
-	}
-
-	if err = yaml.Unmarshal(buffer, &pkgs); err != nil {
-		return Pkgs{}, err
-	}
-	return pkgs, nil
+func Initialized() bool {
+	_, err := os.ReadFile(ConfigFilepath)
+	return !errors.Is(err, os.ErrNotExist)
 }
 
-func Marshall(pkgs Pkgs) error {
-	marshal, err := yaml.Marshal(pkgs)
-	if err != nil {
-		return err
+func UninitializeIfEmpty() {
+	if Initialized() {
+		pkgs := Unmarshalled()
+		if len(pkgs.Packages) == 0 {
+			os.Remove(ConfigFilepath)
+		}
+	}
+}
+
+func Unmarshalled() (pkgs Pkgs) {
+	if !Initialized() {
+		os.Create(ConfigFilepath)
 	}
 
-	return os.WriteFile(ConfigFilepath, marshal, hp.Perm)
+	buffer, _ := os.ReadFile(ConfigFilepath)
+	_ = yaml.Unmarshal(buffer, &pkgs)
+	return pkgs
+}
+
+func Marshall(pkgs Pkgs) {
+	marshal, _ := yaml.Marshal(pkgs)
+	_ = os.WriteFile(ConfigFilepath, marshal, hp.Perm)
 }

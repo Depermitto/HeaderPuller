@@ -17,5 +17,8 @@ var (
 	ErrArg               = errors.New("this configuration doesn't take any arguments")
 	ErrNotInWorkspace    = errors.New("not in hp workspace")
 	ErrAlreadyDownloaded = errors.New("already downloaded this package")
+	NoErrPulled          = errors.New("pull successful")
 	NoErrWiped           = errors.New("wipe successful")
+	NoErrRemoved         = errors.New("removal successful")
+	NoErrSynced          = errors.New("sync successful")
 )

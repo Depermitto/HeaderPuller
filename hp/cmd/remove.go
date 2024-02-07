@@ -21,7 +21,7 @@ const (
 var RemoveCmd = &cli.Command{
 	Name:    "remove",
 	Aliases: []string{"rm", "r"},
-	Usage:   "Removes a package and updates the config file",
+	Usage:   "Removes a package and updates the ops file",
 	Description: `Removes files and folders of all header files encompassing a package. There are 3 variations of this command:
 - remove <id> - delete by id
 - remove <name> - remove by package name
@@ -30,6 +30,10 @@ var RemoveCmd = &cli.Command{
 The ids and packages names are provided by the list command.
 `,
 	Action: func(cCtx *cli.Context) error {
+		if !pkg.Initialized() {
+			return hp.ErrNotInWorkspace
+		}
+
 		if !cCtx.Args().Present() {
 			return hp.ErrNoArg
 		}
@@ -49,12 +53,9 @@ The ids and packages names are provided by the list command.
 }
 
 func Remove(arg string, mode rmMode) error {
-	pkgs, err := pkg.Unmarshalled()
-	if err != nil {
-		return err
-	}
-
 	var filtered pkg.Pkgs
+	pkgs := pkg.Unmarshalled()
+	defer pkg.UninitializeIfEmpty()
 	for i, p := range pkgs.Packages {
 		if (mode == LinkMode && p.Link == arg) ||
 			(mode == IdMode && strconv.FormatInt(int64(i), 10) == arg) ||
@@ -69,8 +70,6 @@ func Remove(arg string, mode rmMode) error {
 		}
 	}
 
-	if len(filtered.Packages) == 0 {
-		return os.Remove(pkg.ConfigFilepath)
-	}
-	return pkg.Marshall(filtered)
+	pkg.Marshall(filtered)
+	return hp.NoErrRemoved
 }

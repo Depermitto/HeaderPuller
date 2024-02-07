@@ -4,14 +4,18 @@ import (
 	"HeaderPuller/hp"
 	"HeaderPuller/hp/internal/files"
 	"HeaderPuller/hp/internal/pkg"
+	"errors"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 var WipeCmd = &cli.Command{
 	Name:  "wipe",
 	Usage: "Removes all pulled packages and the the *hp.yaml* file itself.",
 	Action: func(cCtx *cli.Context) error {
+		if !pkg.Initialized() {
+			return hp.ErrNotInWorkspace
+		}
+
 		if cCtx.Args().Present() {
 			return hp.ErrArg
 		}
@@ -21,21 +25,16 @@ var WipeCmd = &cli.Command{
 }
 
 func Wipe() error {
-	pkgs, err := pkg.Unmarshalled()
-	if err != nil {
-		return err
-	}
-
-	if len(pkgs.Packages) == 0 {
-		os.Remove(pkg.ConfigFilepath) // This is to remove empty config file
-		return hp.ErrNotInWorkspace
-	}
+	pkgs := pkg.Unmarshalled()
+	defer pkg.UninitializeIfEmpty()
 
 	for range pkgs.Packages {
-		if err := Remove("0", IdMode); err != nil {
+		err := Remove("0", IdMode)
+		if !errors.Is(err, hp.NoErrRemoved) {
 			return err
 		}
 	}
-	files.RemoveEmptyDirs("include")
+	files.RemoveEmptyDirs(hp.IncludeDir)
+
 	return hp.NoErrWiped
 }
