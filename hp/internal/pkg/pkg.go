@@ -5,51 +5,51 @@ import (
 	"errors"
 	"gopkg.in/yaml.v3"
 	"os"
+	"slices"
 )
 
 const ConfigFilepath = "hp.yaml"
 
-type ConfigPkgs struct {
-	Packages []ConfigPkg `yaml:"packages"`
+type Pkgs struct {
+	Packages []Pkg `yaml:"packages"`
 }
 
-func (pkgs *ConfigPkgs) Append(pkg ConfigPkg) {
-	for _, p := range pkgs.Packages {
-		if p.Eq(pkg) {
-			return
-		}
+func (pkgs *Pkgs) Contains(link string, remote string) bool {
+	return slices.ContainsFunc(pkgs.Packages, func(e Pkg) bool {
+		return e.Link == link && e.Remote == remote
+	})
+}
+
+func (pkgs *Pkgs) AppendUnique(pkg Pkg) {
+	if !pkgs.Contains(pkg.Link, pkg.Remote) {
+		pkgs.Packages = append(pkgs.Packages, pkg)
 	}
-	pkgs.Packages = append(pkgs.Packages, pkg)
 }
 
-type ConfigPkg struct {
+type Pkg struct {
 	Name   string   `yaml:"name"`
 	Link   string   `yaml:"link"`
 	Remote string   `yaml:"remote"`
 	Local  []string `yaml:"local"`
 }
 
-func (c ConfigPkg) Eq(other ConfigPkg) bool {
-	return c.Remote == other.Remote && c.Link == other.Link && c.Name == other.Name
-}
-
-func Unmarshalled() (pkgs ConfigPkgs, err error) {
+func Unmarshalled() (pkgs Pkgs, err error) {
 	buffer, err := os.ReadFile(ConfigFilepath)
 	if errors.Is(err, os.ErrNotExist) {
 		os.Create(ConfigFilepath)
 		buffer, err = os.ReadFile(ConfigFilepath)
 	}
 	if err != nil {
-		return ConfigPkgs{}, err
+		return Pkgs{}, err
 	}
 
 	if err = yaml.Unmarshal(buffer, &pkgs); err != nil {
-		return ConfigPkgs{}, err
+		return Pkgs{}, err
 	}
 	return pkgs, nil
 }
 
-func Marshall(pkgs ConfigPkgs) error {
+func Marshall(pkgs Pkgs) error {
 	marshal, err := yaml.Marshal(pkgs)
 	if err != nil {
 		return err

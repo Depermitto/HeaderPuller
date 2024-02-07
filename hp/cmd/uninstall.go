@@ -1,4 +1,4 @@
-package action
+package cmd
 
 import (
 	"bufio"
@@ -7,6 +7,12 @@ import (
 	"os"
 	"strings"
 )
+
+var UninstallCmd = &cli.Command{
+	Name:   "uninstall",
+	Usage:  "Upon confirmation, wipes hp from the computer entirely",
+	Action: Uninstall,
+}
 
 var Uninstall cli.ActionFunc = func(cCtx *cli.Context) error {
 	scanner := bufio.NewScanner(os.Stdin)

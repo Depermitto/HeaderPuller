@@ -4,7 +4,7 @@
 * Install
 Provided you have [[https://go.dev/][go]] installed, use this oneliner in the command-line (should work cross-platform, if not simply clone the repo and run ~go build~):
 #+begin_src bash
-git clone https://github.com/Depermitto/HeaderPuller && cd ./HeaderPuller && go build -o $GOPATH/bin/hp
+git clone https://github.com/Depermitto/HeaderPuller && cd ./HeaderPuller && go build -o "$(go env GOPATH)/bin/hp"
 #+end_src
 
 * Capabilities
@@ -73,5 +73,5 @@ Upon confirmation, wipes *hp* from the computer entirely
 - [X] Fix ~sync~ command to ignore already downloaded packages
 - [X] Make it possible to ~wipe~ an empty /hp.yaml/
 - [ ] Upgrade itself
-- [ ] Clean up codebase
+- [X] Clean up codebase
 - [ ] Add comments
