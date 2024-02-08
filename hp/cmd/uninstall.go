@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/urfave/cli/v2"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -44,10 +45,11 @@ func Uninstall(c *ops.Config) error {
 		}
 	}
 
-	path := fmt.Sprintf("%v/bin/hp", os.Getenv("GOPATH"))
-	err := os.Remove(path)
+	path, err := exec.LookPath("hp")
 	if err != nil {
 		return fmt.Errorf("%v\nhp executable must have been moved or already removed", err)
 	}
+
+	os.Remove(path)
 	return hp.NoErrUninstalled
 }

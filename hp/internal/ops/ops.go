@@ -14,16 +14,16 @@ func (c *Config) IgnoreExt() bool {
 	return c.ignoreExt
 }
 
+func (c *Config) NoConfirm() bool {
+	return c.noConfirm
+}
+
 func (c *Config) SetForce(force bool) {
 	c.force = force
 }
 
 func (c *Config) SetIgnoreExt(ignoreExt bool) {
 	c.ignoreExt = ignoreExt
-}
-
-func (c *Config) NoConfirm() bool {
-	return c.noConfirm
 }
 
 func (c *Config) SetNoConfirm(noConfirm bool) {
