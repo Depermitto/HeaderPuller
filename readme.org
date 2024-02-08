@@ -4,7 +4,7 @@
 * Install
 Provided you have [[https://go.dev/][go]] installed, use this oneliner in the command-line (should work cross-platform, if not simply clone the repo and run ~go build~):
 #+begin_src bash
-git clone https://github.com/Depermitto/HeaderPuller && cd ./HeaderPuller && go build -o "$(go env GOPATH)/bin/hp" && cd .. && rm -rf ./HeaderPuller/
+git clone https://github.com/Depermitto/HeaderPuller && go build -C ./HeaderPuller -o "$(go env GOPATH)/bin/hp" && rm -rf ./HeaderPuller/
 #+end_src
 
 * Capabilities
