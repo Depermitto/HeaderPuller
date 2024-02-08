@@ -5,6 +5,7 @@ import (
 	"HeaderPuller/hp/internal/files"
 	"HeaderPuller/hp/internal/pkg"
 	"HeaderPuller/hp/internal/repo"
+	"errors"
 	"github.com/urfave/cli/v2"
 	"os"
 	"strconv"
@@ -32,7 +33,7 @@ The ids and packages names are provided by the list command.
 `,
 	Action: func(cCtx *cli.Context) error {
 		if cCtx.Args().Len() != 1 {
-			return hp.ErrNoArg
+			return errors.New("requires one argument")
 		}
 
 		if !pkg.Initialized() {
