@@ -9,10 +9,15 @@ import (
 )
 
 var SyncCmd = &cli.Command{
-	Name:    "sync",
-	Aliases: []string{"s"},
-	Usage:   "Updates every package to the latest version.",
+	Name:      "sync",
+	Aliases:   []string{"s"},
+	Usage:     "Updates every package to the latest version",
+	UsageText: "hp sync/s",
 	Action: func(cCtx *cli.Context) error {
+		if cCtx.Args().Present() {
+			return hp.ErrArg
+		}
+
 		if !pkg.Initialized() {
 			return hp.ErrNotInWorkspace
 		}

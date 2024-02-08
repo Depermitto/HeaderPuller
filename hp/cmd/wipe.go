@@ -9,15 +9,16 @@ import (
 )
 
 var WipeCmd = &cli.Command{
-	Name:  "wipe",
-	Usage: "Removes all pulled packages and the the *hp.yaml* file itself.",
+	Name:      "wipe",
+	Usage:     "Removes all pulled packages and the the *hp.yaml* file itself",
+	UsageText: "hp wipe",
 	Action: func(cCtx *cli.Context) error {
-		if !pkg.Initialized() {
-			return hp.ErrNotInWorkspace
-		}
-
 		if cCtx.Args().Present() {
 			return hp.ErrArg
+		}
+
+		if !pkg.Initialized() {
+			return hp.ErrNotInWorkspace
 		}
 
 		return Wipe()

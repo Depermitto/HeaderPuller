@@ -6,6 +6,7 @@ import (
 	"HeaderPuller/hp/internal/ops"
 	"HeaderPuller/hp/internal/pkg"
 	"HeaderPuller/hp/internal/repo"
+	"errors"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"
@@ -17,16 +18,19 @@ var PullCmd = &cli.Command{
 	Aliases: []string{"p"},
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
-			Name:    "ignore-extensions",
-			Aliases: []string{"i"},
-			Usage:   "ignore file extensions, allows pulling any type of file.",
+			Name:               "ignore-extensions",
+			Aliases:            []string{"i"},
+			Usage:              "ignore file extensions, allows pulling any type of file",
+			DisableDefaultText: true,
 		},
 		&cli.BoolFlag{
-			Name:    "force",
-			Aliases: []string{"f"},
-			Usage:   "force pull.",
+			Name:               "force",
+			Aliases:            []string{"f"},
+			Usage:              "force pull",
+			DisableDefaultText: true,
 		}},
-	Usage: "Pull headers in specified folder and update/create the ops file",
+	Usage:     "Pull headers in specified folder and update/create the package log file",
+	UsageText: "hp pull/p <repo-link> [file]/[from]",
 	Description: `There are 3 variations of this command:
 	- pull <repo-link> - providing the repo link will copy every valid file from <repo-link>/include/ to ./include/
 	- pull <repo-link> <file> - will copy that exact file if valid from <repo-link>/ to ./include/
@@ -35,6 +39,8 @@ var PullCmd = &cli.Command{
 	Action: func(cCtx *cli.Context) error {
 		if !cCtx.Args().Present() {
 			return hp.ErrNoArg
+		} else if cCtx.Args().Len() > 2 {
+			return errors.New("requires one or two arguments")
 		}
 
 		repoLink, headerDir := cCtx.Args().First(), cCtx.Args().Get(1)

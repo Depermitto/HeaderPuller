@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"HeaderPuller/hp"
+	"HeaderPuller/hp/internal/ops"
 	"bufio"
 	"fmt"
 	"github.com/urfave/cli/v2"
@@ -9,18 +11,37 @@ import (
 )
 
 var UninstallCmd = &cli.Command{
-	Name:   "uninstall",
-	Usage:  "Upon confirmation, wipes hp from the computer entirely",
-	Action: Uninstall,
+	Name: "uninstall",
+	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:               "no-confirmation",
+			Usage:              "doesn't ask for uninstall confirmation.",
+			DisableDefaultText: true,
+		},
+	},
+	Usage:     "Upon confirmation, wipes hp from the computer entirely",
+	UsageText: "hp uninstall",
+	Action: func(cCtx *cli.Context) error {
+		if cCtx.Args().Present() {
+			return hp.ErrArg
+		}
+
+		conf := ops.New()
+		conf.SetNoConfirm(cCtx.Bool("no-confirmation"))
+
+		return Uninstall(conf)
+	},
 }
 
-var Uninstall cli.ActionFunc = func(cCtx *cli.Context) error {
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print("Are you sure? [Y/N] ")
-	scanner.Scan()
-	answer := scanner.Text()
-	if strings.ToUpper(answer) != "Y" {
-		return nil
+func Uninstall(c *ops.Config) error {
+	if !c.NoConfirm() {
+		scanner := bufio.NewScanner(os.Stdin)
+		fmt.Print("Are you sure? [Y/N] ")
+		scanner.Scan()
+		answer := scanner.Text()
+		if strings.ToUpper(answer) != "Y" {
+			return nil
+		}
 	}
 
 	path := fmt.Sprintf("%v/bin/hp", os.Getenv("GOPATH"))
@@ -28,6 +49,5 @@ var Uninstall cli.ActionFunc = func(cCtx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("%v\nhp executable must have been moved or already removed", err)
 	}
-	fmt.Println("Uninstalled successfully")
-	return nil
+	return hp.NoErrUninstalled
 }

@@ -3,6 +3,7 @@ package ops
 type Config struct {
 	force     bool
 	ignoreExt bool
+	noConfirm bool
 }
 
 func (c *Config) Force() bool {
@@ -21,6 +22,14 @@ func (c *Config) SetIgnoreExt(ignoreExt bool) {
 	c.ignoreExt = ignoreExt
 }
 
+func (c *Config) NoConfirm() bool {
+	return c.noConfirm
+}
+
+func (c *Config) SetNoConfirm(noConfirm bool) {
+	c.noConfirm = noConfirm
+}
+
 func New(configFuncs ...func(*Config)) *Config {
 	config := &Config{}
 	for _, c := range configFuncs {
@@ -31,6 +40,10 @@ func New(configFuncs ...func(*Config)) *Config {
 
 func WithIgnoreExt(config *Config) {
 	config.ignoreExt = true
+}
+
+func WithNoConfirm(config *Config) {
+	config.noConfirm = true
 }
 
 func WithForce(config *Config) {

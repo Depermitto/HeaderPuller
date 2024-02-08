@@ -1,4 +1,4 @@
-#+title: Cross-platform header-only package manager for C/C++
+#+title: Cross-platform header-only package manager for C/C++ (and more!)
 #+Author: Depermitto
 
 * Install
@@ -8,7 +8,7 @@ git clone https://github.com/Depermitto/HeaderPuller && cd ./HeaderPuller && go 
 #+end_src
 
 * Capabilities
-Upon pulling a file, a *config file* called *hp.yaml* shall be created. This is the core of the package managing functionality. Every *remove* or *pull* operation will modify the content of this file, to keep everything in check. Deleting /include/ folders without using *hp* commands and calling *sync* is _undefined behaviour_.
+Upon pulling a file, a *package log file* called *hp.yaml* shall be created. This is the core of the package managing functionality. Every *remove* or *pull* operation will modify the content of this file, to keep everything in check. Deleting /include/ folders without using *hp* commands and calling *sync* is _undefined behaviour_.
 
 For any doubts, please refer to the ~help~ command of *hp*.
 
@@ -60,8 +60,11 @@ workspace
 ** Syncing
 The ~sync~ command simply pulls every package in *hp.yaml* and overwrites overlapping content, effectively updating every package to the latest version.
 
+** Updating
+The ~update~ command will automagically update the tool to the latest git commit.
+
 ** Wiping hp from workspace
-The ~wipe~ command removes all pulled packages and the the *hp.yaml* file itself. Does not remove *hp* tool from the computer. For that functionality refer to ~uninstall~.
+The ~wipe~ command removes all pulled packages and the *hp.yaml* file itself. Does not remove *hp* tool from the computer. For that functionality refer to ~uninstall~.
 
 ** Uninstall
 Upon confirmation, wipes *hp* from the computer entirely

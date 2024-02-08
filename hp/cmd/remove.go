@@ -19,9 +19,10 @@ const (
 )
 
 var RemoveCmd = &cli.Command{
-	Name:    "remove",
-	Aliases: []string{"rm", "r"},
-	Usage:   "Removes a package and updates the ops file",
+	Name:      "remove",
+	Aliases:   []string{"rm", "r"},
+	Usage:     "Removes a package and updates the package log file",
+	UsageText: "hp remove/rm/r <id>/<name>/<repo-link>",
 	Description: `Removes files and folders of all header files encompassing a package. There are 3 variations of this command:
 - remove <id> - delete by id
 - remove <name> - remove by package name
@@ -30,12 +31,12 @@ var RemoveCmd = &cli.Command{
 The ids and packages names are provided by the list command.
 `,
 	Action: func(cCtx *cli.Context) error {
-		if !pkg.Initialized() {
-			return hp.ErrNotInWorkspace
+		if cCtx.Args().Len() != 1 {
+			return hp.ErrNoArg
 		}
 
-		if !cCtx.Args().Present() {
-			return hp.ErrNoArg
+		if !pkg.Initialized() {
+			return hp.ErrNotInWorkspace
 		}
 
 		arg := cCtx.Args().First()

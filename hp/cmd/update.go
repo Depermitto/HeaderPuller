@@ -11,17 +11,22 @@ import (
 )
 
 var UpdateCmd = &cli.Command{
-	Name:    "update",
-	Aliases: []string{"u"},
-	Usage:   "Update to the latest git commit",
+	Name:      "update",
+	Aliases:   []string{"u"},
+	Usage:     "Update to the latest git commit",
+	UsageText: "hp update/u",
 	Action: func(cCtx *cli.Context) error {
+		if cCtx.Args().Present() {
+			return hp.ErrArg
+		}
+
 		executablePath, err := exec.LookPath("hp")
 		if err != nil {
 			return errors.New("hp executable not found, update unable to finish")
 		}
 
 		tmp := strconv.Itoa(time.Now().Nanosecond())
-		if err := exec.Command("git", "clone", "https://github.com/Depermitto/HeaderPuller", tmp).Run(); err != nil {
+		if err := exec.Command("git", "clone", hp.RepoLink, tmp).Run(); err != nil {
 			return errors.New("cannot clone repo, update unable to finish")
 		}
 		defer os.RemoveAll(tmp)
