@@ -15,7 +15,6 @@ const (
 var (
 	ErrNoArg             = errors.New("no arguments provided")
 	ErrArg               = errors.New("command doesn't take any arguments")
-	ErrNoFilesFound      = errors.New("no files found")
 	ErrNotInWorkspace    = errors.New("not in hp workspace")
 	ErrAlreadyDownloaded = errors.New("already downloaded this package")
 	NoErrPulled          = errors.New("pulled")

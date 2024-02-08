@@ -33,7 +33,7 @@ The ids and packages names are provided by the list command.
 `,
 	Action: func(cCtx *cli.Context) error {
 		if cCtx.Args().Len() != 1 {
-			return errors.New("requires one argument")
+			return errors.New("requires exactly one argument")
 		}
 
 		if !pkg.Initialized() {
@@ -70,6 +70,10 @@ func Remove(arg string, mode rmMode) error {
 		} else {
 			filtered.Packages = append(filtered.Packages, p)
 		}
+	}
+
+	if len(filtered.Packages) == len(pkgs.Packages) {
+		return errors.New("no suitable package found")
 	}
 
 	pkg.Marshall(filtered)

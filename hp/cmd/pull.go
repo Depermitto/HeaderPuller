@@ -75,7 +75,7 @@ func Pull(repoLink string, headerDir string, c *ops.Config) error {
 
 	var foundFiles = files.ReadDirRecur(fs, headerDir)
 	if len(foundFiles) == 0 {
-		return hp.ErrNoFilesFound
+		return errors.New("no files found, please try specifing a directory")
 	}
 
 	var filepaths []string
