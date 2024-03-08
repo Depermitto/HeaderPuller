@@ -3,8 +3,9 @@ package main
 import (
 	"HeaderPuller/hp/cmd"
 	"fmt"
-	"github.com/urfave/cli/v2"
 	"os"
+
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
